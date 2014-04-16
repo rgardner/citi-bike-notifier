@@ -6,15 +6,15 @@
 
 require 'twilio-ruby'
 
-CONFIG = YAML.load_file(File.join(__dir__, 'config.yml'))
+TWILIO_CONFIG = YAML.load_file(File.join(__dir__, 'config.yml'))
 
 # Twilio Information
-ACCOUNT_SID = CONFIG['twilio_account_sid']
-AUTH_TOKEN = CONFIG['twilio_auth_token']
-TWILIO_NUMBER = CONFIG['twilio_number']
+ACCOUNT_SID = TWILIO_CONFIG['twilio_account_sid']
+AUTH_TOKEN = TWILIO_CONFIG['twilio_auth_token']
+TWILIO_NUMBER = TWILIO_CONFIG['twilio_number']
 
 # Cell number
-MY_CELL_NUMBER = CONFIG['my_cell_number']
+MY_CELL_NUMBER = TWILIO_CONFIG['my_cell_number']
 
 def notify_me(bike_trip)
   message =
