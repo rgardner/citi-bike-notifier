@@ -10,6 +10,9 @@ require_relative 'bike_trip'
 require_relative 'citi_scraper'
 require_relative 'notify'
 
+$stdout.reopen('out.log', 'w')
+$stderr.reopen('err.log', 'w')
+
 LOGIN_SUCCESS = 'Welcome To Citi Bike!'
 CITIBIKE_CONFIG = YAML.load_file(File.join(__dir__, 'config.yml'))
 SLEEP_DURATION = 300 # in seconds
@@ -25,6 +28,7 @@ end
 puts 'Successfully logged in to Citi Bike website'
 
 loop do
+  print "#{DateTime.now}: "
   trip = user.trips.first
   unless trip
     user.login(username, password)
@@ -33,10 +37,10 @@ loop do
 
   # check if ride completed in last SLEEP_DURATION secs
   if (DateTime.now.to_time.to_i - trip.end_time.to_time.to_i) < SLEEP_DURATION
-    puts 'Recent trip found!'
+    print 'Recent trip found! '
     notify_me
   else
-    puts 'No recent trip found.'
+    print 'No recent trip found. '
   end
 
   puts "Sleeping for #{SLEEP_DURATION} seconds"
