@@ -7,6 +7,7 @@ Messages you after returning a Citi Bike.
 ```
   git clone https://github.com/rgardner/citi-bike-notifier.git
   cd citi-bike-notifier
+  bundle install
   mv config.yml.example config.yml
 ```
 
