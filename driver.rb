@@ -43,6 +43,6 @@ loop do
     print 'No recent trip found. '
   end
 
-  puts "Sleeping for #{SLEEP_DURATION} seconds"
+  puts "Sleeping for #{SLEEP_DURATION} seconds."
   sleep(SLEEP_DURATION)
 end
