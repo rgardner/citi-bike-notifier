@@ -5,6 +5,7 @@
 # License: MIT
 
 require 'twilio-ruby'
+require 'yaml'
 
 TWILIO_CONFIG = YAML.load_file(File.join(__dir__, 'config.yml'))
 
@@ -31,8 +32,8 @@ def notify_me(bike_trip)
 end
 
 def send_message(message)
-  client = Twilio::Rest::Client.new(ACCOUNT_SID, AUTH_TOKEN)
-  client.acount.messages.create(
+  client = Twilio::REST::Client.new(ACCOUNT_SID, AUTH_TOKEN)
+  client.account.messages.create(
     from: TWILIO_NUMBER,
     to: MY_CELL_NUMBER,
     body: message
