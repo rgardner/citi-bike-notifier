@@ -1,0 +1,8 @@
+---
+citibike_username: USERNAME
+citibike_password: PASSWORD
+twilio_account_sid: ACCOUNT_SID
+twilio_auth_token: AUTH_TOKEN
+twilio_number: TWILIO_NUMBER
+my_cell_number: PHONE_NUMBER_TO_TEXT
+---
