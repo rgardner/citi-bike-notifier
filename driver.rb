@@ -12,7 +12,7 @@ require_relative 'notify'
 
 LOGIN_SUCCESS = 'Welcome To Citi Bike!'
 CITIBIKE_CONFIG = YAML.load_file(File.join(__dir__, 'config.yml'))
-SLEEP_DURATION = 300 # in seconds
+SLEEP_DURATION = 600 # in seconds
 
 def log(message)
   File.open('out.log', 'a') do |f|
@@ -34,11 +34,12 @@ send_message('Welcome to Citi Bike Notifier! You are now setup to receive a ' \
 
 loop do
   log "#{DateTime.now}: "
-  trip = user.trips.first
-  unless trip
+  trips = user.trips
+  unless trips
     user.login(username, password)
-    trip = user.trips.first
+    trips = user.trips
   end
+  trip = trips.first
 
   # check if ride completed in last SLEEP_DURATION secs
   if (DateTime.now.to_time.to_i - trip.end_time.to_time.to_i) < SLEEP_DURATION
