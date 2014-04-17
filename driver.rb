@@ -29,8 +29,8 @@ unless user.login(username, password) == LOGIN_SUCCESS
 end
 
 log "Successfully logged in to Citi Bike website\n"
-send_message('Welcome to Citi Bike Notifier! You are now setup to receive a ' \
-             'message after returning a Citi Bike.')
+send_message('Welcome to Citi Bike Notifier! You are now setup to receive ' \
+             'text message notifications.')
 
 loop do
   log "#{DateTime.now}: "
