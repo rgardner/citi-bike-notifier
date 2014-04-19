@@ -17,12 +17,12 @@ class BikeTrip
   # Converts raw datetime string to DateTime object
   def start_time=(datetime)
     @start_time = DateTime.strptime(datetime, DATE_FORMAT)
-    @start_time = (@start_time.to_time + TIMEZONE_OFFSET).to_datetime
+    @start_time = (@start_time.to_time - TIMEZONE_OFFSET).to_datetime
   end
 
   def end_time=(datetime)
     @end_time = DateTime.strptime(datetime, DATE_FORMAT)
-    @end_time = (@start_time.to_time + TIMEZONE_OFFSET).to_datetime
+    @end_time = (@start_time.to_time - TIMEZONE_OFFSET).to_datetime
   end
 
   # Duration of trip in seconds
