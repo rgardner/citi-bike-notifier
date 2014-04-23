@@ -42,7 +42,7 @@ loop do
   trip = trips.first
 
   # check if ride completed in last SLEEP_DURATION secs
-  if (DateTime.now.to_time.to_i - trip.end_time.to_time.to_i) < SLEEP_DURATION
+  if (Time.now.to_i - trip.end_time.to_i) < SLEEP_DURATION
     log 'Recent trip found! '
     notify_me(trip)
   else
