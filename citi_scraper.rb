@@ -13,8 +13,9 @@ class CitiScraper
 
   LOGIN_URL = 'https://citibikenyc.com/login'
   TRIPS_URL = 'https://citibikenyc.com/member/trips'
-  LOGIN_SUCCESS = 'Welcome To Citi Bike!'
-  TRIPS_SUCCESS = 'Trips | Citi Bike'
+
+  LOGIN_PAGE_TITLE = 'Login | Citi Bike'
+  TRIPS_PAGE_TITLE = 'Trips | Citi Bike'
 
   attr_accessor :username, :password
 
@@ -31,7 +32,7 @@ class CitiScraper
     @agent.page.forms[0]['subscriberUsername'] = username
     @agent.page.forms[0]['subscriberPassword'] = password
     @agent.page.forms[0].submit
-    unless @agent.page.title == LOGIN_SUCCESS
+    if @agent.page.title == LOGIN_PAGE_TITLE
       fail LoginError, 'Invalid username or password.'
     end
     @password = password
@@ -41,10 +42,11 @@ class CitiScraper
   # Returns this month's trips.
   def trips
     @agent.get(TRIPS_URL)
-    unless @agent.page.title == TRIPS_SUCCESS
-      login
-      @agent.get(TRIPS_URL)
-    end
+
+    # If session expires, re-login to citibikenyc.com. The site will redirect
+    # back to TRIPS_URL upon sign in (friendly forwarding)
+    login unless @agent.page.title == TRIPS_PAGE_TITLE
+
     rows = Nokogiri::HTML(@agent.page.body).xpath('//table/tbody/tr')
 
     # reject rows with durations < 2 minutes
