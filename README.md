@@ -5,10 +5,10 @@ Messages you after returning a Citi Bike.
 ## Getting Started
 
 ```
-  git clone https://github.com/rgardner/citi-bike-notifier.git
-  cd citi-bike-notifier
-  bundle install
-  cp config.yml.example config.yml
+git clone https://github.com/rgardner/citi-bike-notifier.git
+cd citi-bike-notifier
+bundle install
+cp config.yml.example config.yml
 ```
 
 In config.yml:
