@@ -17,9 +17,19 @@ TWILIO_NUMBER = TWILIO_CONFIG['twilio_number']
 # Cell number
 MY_CELL_NUMBER = TWILIO_CONFIG['my_cell_number']
 
-def notify_me(bike_trip)
-  message =
-    case bike_trip.duration
+# Twilio helper class
+class Notify
+  SECS_PER_MIN = 60
+
+  def self.notify_me(bike_trip)
+    duration_in_minutes = bike_trip.duration / SECS_PER_MIN
+    message = message(duration_in_minutes)
+
+    send_message("#{message} You biked for #{bike_trip.pretty_duration}")
+  end
+
+  def self.message(duration_in_minutes)
+    case duration_in_minutes
     when 0..3 then 'Whoa there Flash Gordon, be careful.'
     when 3..10 then 'Just a short ride.'
     when 10..30 then ''
@@ -27,15 +37,16 @@ def notify_me(bike_trip)
     when 40..45 then 'Too close for comfort, man!'
     else 'You had too much fun.'
     end
+  end
 
-  send_message("#{message} You biked for #{bike_trip.pretty_duration}")
-end
+  def self.send_message(message)
+    client = Twilio::REST::Client.new(ACCOUNT_SID, AUTH_TOKEN)
+    client.account.messages.create(
+      from: TWILIO_NUMBER,
+      to: MY_CELL_NUMBER,
+      body: message
+    )
+  end
 
-def send_message(message)
-  client = Twilio::REST::Client.new(ACCOUNT_SID, AUTH_TOKEN)
-  client.account.messages.create(
-    from: TWILIO_NUMBER,
-    to: MY_CELL_NUMBER,
-    body: message
-  )
+  private_class_method :message
 end

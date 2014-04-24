@@ -10,7 +10,6 @@ require_relative 'bike_trip'
 require_relative 'citi_scraper'
 require_relative 'notify'
 
-LOGIN_SUCCESS = 'Welcome To Citi Bike!'
 CITIBIKE_CONFIG = YAML.load_file(File.join(__dir__, 'config.yml'))
 SLEEP_DURATION = 600 # in seconds
 
@@ -20,31 +19,22 @@ def log(message)
   end
 end
 
-user = CitiScraper.new
 username = CITIBIKE_CONFIG['citibike_username']
 password = CITIBIKE_CONFIG['citibike_password']
-
-unless user.login(username, password) == LOGIN_SUCCESS
-  fail 'Incorrect username or password'
-end
+user = CitiScraper.new(username, password)
 
 log "Successfully logged in to Citi Bike website\n"
-send_message('Welcome to Citi Bike Notifier! You are now setup to receive ' \
-             'text message notifications.')
+Notify.send_message('Welcome to Citi Bike Notifier! You are now setup to ' \
+                    'receive text message notifications.')
 
 loop do
   log "#{DateTime.now}: "
-  trips = user.trips
-  unless trips
-    user.login(username, password)
-    trips = user.trips
-  end
-  trip = trips.first
+  trip = user.trips.first
 
   # check if ride completed in last SLEEP_DURATION secs
   if (Time.now.to_i - trip.end_time.to_i) < SLEEP_DURATION
     log 'Recent trip found! '
-    notify_me(trip)
+    Notify.notify_me(trip)
   else
     log 'No recent trip found. '
   end
