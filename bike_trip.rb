@@ -13,7 +13,7 @@ class BikeTrip
   attr_accessor :id, :start_location, :start_time, :end_location, :end_time,
                 :duration, :pretty_duration
 
-  # Converts raw datetime string to DateTime object
+  # Converts raw datetime string to Time object
   def start_time=(datetime)
     @start_time = Time.strptime(datetime, DATE_FORMAT)
   end
