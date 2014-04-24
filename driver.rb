@@ -9,6 +9,7 @@
 require_relative 'bike_trip'
 require_relative 'citi_scraper'
 require_relative 'notify'
+require 'trollop'
 
 CITIBIKE_CONFIG = YAML.load_file(File.join(__dir__, 'config.yml'))
 SLEEP_DURATION = 600 # in seconds
@@ -19,13 +20,20 @@ def log(message)
   end
 end
 
+opts = Trollop.options do
+  banner 'Notify you after riding a Citi Bike'
+  opt :dry_run, 'Do not send text notifications'
+end
+
 username = CITIBIKE_CONFIG['citibike_username']
 password = CITIBIKE_CONFIG['citibike_password']
 user = CitiScraper.new(username, password)
 
 log "Successfully logged in to Citi Bike website\n"
-Notify.send_message('Welcome to Citi Bike Notifier! You are now setup to ' \
-                    'receive text message notifications.')
+unless opts[:dry_run]
+  Notify.send_message('Welcome to Citi Bike Notifier! You are now setup to ' \
+                      'receive text message notifications.')
+end
 
 loop do
   log "#{DateTime.now}: "
@@ -34,7 +42,7 @@ loop do
   # check if ride completed in last SLEEP_DURATION secs
   if (DateTime.now.to_time.to_i - trip.end_time.to_time.to_i) < SLEEP_DURATION
     log 'Recent trip found! '
-    Notify.notify_me(trip)
+    Notify.notify_me(trip) unless opts[:dry_run]
   else
     log 'No recent trip found. '
   end
