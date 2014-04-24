@@ -20,6 +20,4 @@ In config.yml:
 
 To run in background:
 
-```
-nohup ruby driver.rb &
-```
+`nohup ruby driver.rb &`
