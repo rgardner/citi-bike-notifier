@@ -57,8 +57,8 @@ loop do
     log "Sleeping for #{SLEEP_DURATION} seconds.\n"
     sleep(SLEEP_DURATION)
   rescue Exceptions::CitiBikeWebsiteError => e
+    log "\n"        # flush log
     handle_error(e)
-    log "\n"              # flush log
     sleep(SLEEP_DURATION)
   end
 end
