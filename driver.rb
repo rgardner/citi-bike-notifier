@@ -9,6 +9,7 @@
 require_relative 'bike_trip'
 require_relative 'citi_scraper'
 require_relative 'notify'
+require_relative 'exceptions'
 require 'trollop'
 
 CITIBIKE_CONFIG = YAML.load_file(File.join(__dir__, 'config.yml'))
@@ -41,22 +42,23 @@ unless opts[:dry_run]
 end
 
 loop do
-  log "#{DateTime.now}: "
-  trip = user.trips.first
+  begin
+    log "#{DateTime.now}: "
+    trip = user.trips.first
 
-  # check if ride completed in last SLEEP_DURATION secs
-  if (Time.now - trip.end_time) < SLEEP_DURATION
-    log 'Recent trip found! '
-    Notify.notify_me(trip) unless opts[:dry_run]
-  else
-    log 'No recent trip found. '
+    # check if ride completed in last SLEEP_DURATION secs
+    if (Time.now - trip.end_time) < SLEEP_DURATION
+      log 'Recent trip found! '
+      Notify.notify_me(trip) unless opts[:dry_run]
+    else
+      log 'No recent trip found. '
+    end
+
+    log "Sleeping for #{SLEEP_DURATION} seconds.\n"
+    sleep(SLEEP_DURATION)
+  rescue Exceptions::CitiBikeWebsiteError => e
+    handle_error(e)
+    log "\n"              # flush log
+    sleep(SLEEP_DURATION)
   end
-
-  log "Sleeping for #{SLEEP_DURATION} seconds.\n"
-  sleep(SLEEP_DURATION)
-rescue CitiScraper::CitiBikeWebsiteError => e
-  handle_error(e)
-  log '\n'              # flush log
-  sleep(SLEEP_DURATION)
-end
 end

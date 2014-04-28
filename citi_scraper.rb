@@ -4,14 +4,12 @@
 # Date: 4/28/14
 # License: MIT
 
-require 'mechanize'
 require_relative 'bike_trip'
+require_relative 'exceptions'
+require 'mechanize'
 
 # Scrape the Citibike website
 class CitiScraper
-  LoginError = Class.new(StandardError)
-  CitiBikeWebsiteError = Class.new(StandardError)
-
   LOGIN_URL = 'https://citibikenyc.com/login'
   TRIPS_URL = 'https://citibikenyc.com/member/trips'
 
@@ -36,14 +34,13 @@ class CitiScraper
     @agent.page.forms[0]['subscriberPassword'] = password
     @agent.page.forms[0].submit
     if @agent.page.title == LOGIN_PAGE_TITLE
-      fail LoginError, 'Invalid username or password.'
+      fail Exceptions::LoginError, 'Invalid username or password.'
     end
     @password = password
     @username = username
   rescue Mechanize::ResponseCodeError => e
     handle_error(e)
-    raise CitiBikeWebsiteError
-  end
+    raise Exceptions::CitiBikeWebsiteError
   end
 
   # Returns this month's trips.
