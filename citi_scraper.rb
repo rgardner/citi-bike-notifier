@@ -17,6 +17,8 @@ class CitiScraper
   LOGIN_PAGE_TITLE = 'Login | Citi Bike'
   TRIPS_PAGE_TITLE = 'Trips | Citi Bike'
 
+  MIN_TRIP_DURATION = 2 # in minutes
+
   attr_accessor :username, :password
 
   # initialize variables and login
@@ -49,9 +51,11 @@ class CitiScraper
 
     rows = Nokogiri::HTML(@agent.page.body).xpath('//table/tbody/tr')
 
-    # reject rows with durations < 2 minutes
+    # Reject bike trips that are either in progress or have durations <
+    #   MIN_TRIP_DURATION minutes.
     rows = rows.reject do |row|
-      row.at_xpath('td[6]/text()').to_s.match(/(\d{1,2})m/)[1].to_i < 2
+      duration = row.at_xpath('td[6]/text()').to_s.match(/(\d{1,2})m/)
+      !duration || (duration.captures[0].to_i < MIN_TRIP_DURATION)
     end
     rows.map { |row| row_to_trip(row) }
   end
