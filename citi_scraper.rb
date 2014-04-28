@@ -1,7 +1,7 @@
 # Name: citi_scraper.rb
 # Description:
 # Author: Bob Gardner
-# Date: 4/14/14
+# Date: 4/28/14
 # License: MIT
 
 require 'mechanize'
@@ -10,6 +10,7 @@ require_relative 'bike_trip'
 # Scrape the Citibike website
 class CitiScraper
   LoginError = Class.new(StandardError)
+  CitiBikeWebsiteError = Class.new(StandardError)
 
   LOGIN_URL = 'https://citibikenyc.com/login'
   TRIPS_URL = 'https://citibikenyc.com/member/trips'
@@ -39,6 +40,10 @@ class CitiScraper
     end
     @password = password
     @username = username
+  rescue Mechanize::ResponseCodeError => e
+    handle_error(e)
+    raise CitiBikeWebsiteError
+  end
   end
 
   # Returns this month's trips.
@@ -61,6 +66,12 @@ class CitiScraper
   end
 
   private
+
+  # Handle Citi Bike Website errors (e.x. Net::HTTPGatewayTimeOut)
+  def handle_error(error)
+    puts error.message
+    puts error.backtrace.join('\n')
+  end
 
   # Convert HTML row into bike trip object
   def row_to_trip(row)

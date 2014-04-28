@@ -20,6 +20,11 @@ def log(message)
   end
 end
 
+def handle_error(error)
+  log error.message
+  log error.backtrace.join('\n')
+end
+
 opts = Trollop.options do
   banner 'Notify you after riding a Citi Bike'
   opt :dry_run, 'Do not send text notifications'
@@ -49,4 +54,9 @@ loop do
 
   log "Sleeping for #{SLEEP_DURATION} seconds.\n"
   sleep(SLEEP_DURATION)
+rescue CitiScraper::CitiBikeWebsiteError => e
+  handle_error(e)
+  log '\n'              # flush log
+  sleep(SLEEP_DURATION)
+end
 end
