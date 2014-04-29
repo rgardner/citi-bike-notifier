@@ -44,7 +44,13 @@ end
 loop do
   begin
     log "#{DateTime.now}: "
-    trip = user.trips.first
+    trips = user.trips
+    trip = trips.first
+    if trip.nil?
+      log "First trip is nil.\n  Trips = #{trips}\n"
+      sleep(SLEEP_DURATION)
+      next
+    end
 
     # check if ride completed in last SLEEP_DURATION secs
     if (Time.now - trip.end_time) < SLEEP_DURATION
