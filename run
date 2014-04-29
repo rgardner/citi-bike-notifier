@@ -1,2 +1,3 @@
 nohup ruby driver.rb &
 echo $! >save_pid.log
+echo "To kill, run 'kill \`cat save_pid.log\`'"
