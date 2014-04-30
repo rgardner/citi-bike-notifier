@@ -19,13 +19,13 @@ class CitiScraper
   MIN_TRIP_DURATION = 2 # in minutes
 
   attr_accessor :username, :password
+  attr_reader   :valid_credentials
 
   # initialize variables and login
   def initialize(username, password)
     @agent = Mechanize.new
-    @username = username
-    @password = password
-    login
+    @valid_credentials = false
+    login(username, password)
   end
 
   def login(username = @username, password = @password)
@@ -34,8 +34,10 @@ class CitiScraper
     @agent.page.forms[0]['subscriberPassword'] = password
     @agent.page.forms[0].submit
     if @agent.page.title == LOGIN_PAGE_TITLE
+      fail Exceptions::CitiBikeWebsiteError if @valid_credentials
       fail Exceptions::LoginError, 'Invalid username or password.'
     end
+    @valid_credentials = true
     @password = password
     @username = username
   rescue Mechanize::ResponseCodeError => e
@@ -48,7 +50,7 @@ class CitiScraper
     @agent.get(TRIPS_URL)
 
     # If session expires, re-login to citibikenyc.com. The site will redirect
-    # back to TRIPS_URL upon sign in (friendly forwarding)
+    #   back to TRIPS_URL upon sign in (friendly forwarding)
     login unless @agent.page.title == TRIPS_PAGE_TITLE
 
     rows = Nokogiri::HTML(@agent.page.body).xpath('//table/tbody/tr')
@@ -67,7 +69,7 @@ class CitiScraper
   # Handle Citi Bike Website errors (e.x. Net::HTTPGatewayTimeOut)
   def handle_error(error)
     puts error.message
-    puts error.backtrace.join('\n')
+    puts error.backtrace.join("\n")
   end
 
   # Convert HTML row into bike trip object
