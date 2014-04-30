@@ -23,7 +23,7 @@ end
 
 def handle_error(error)
   log error.message
-  log error.backtrace.join('\n')
+  log error.backtrace.join("\n")
   fail Exceptions::LoginError if error.is_a?(Exceptions::LoginError)
 end
 
